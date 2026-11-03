@@ -10,7 +10,7 @@ run_worker_first = ["/api/*"]
 [[d1_databases]]
 binding = "VOXORA_DB"
 database_name = "voxora-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "bef3a60a-c230-402b-8bc7-e8c626f4dc4a"
 migrations_dir = "migrations"
 
 # When real-time messaging is implemented, enable Durable Objects here.
