@@ -324,7 +324,7 @@ function createCommunityDialog(){
   });
 }
 function joinDialog(){
-  openModal("Join a community","Paste the 12-character invite code shared by a community member.","Invite code","e.g. a1b2c3d4e5f6a1b2c3d4e5f6a1b2","Join community",async code=>{
+  openModal("Join a community","Paste the 12-character invite code shared by a community member.","Invite code","e.g. 0123456789abcdef0123456789abcdef","Join community",async code=>{
     const data=await api("/api/invites/join",{method:"POST",body:{code:code.toLowerCase()}});
     await refreshCommunities();await selectCommunity(data.community.id);toast("You joined "+data.community.name+".");
   });
