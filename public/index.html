@@ -144,7 +144,7 @@ async function api(path, options){
   }
   return data;
 }
-function initials(value){return (value||"V").trim().split(/\\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"V";}
+function initials(value){return (value||"V").trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"V";}
 function safeDate(value){
   if(!value)return "";
   const normalized=value.includes(" ")&&!value.includes("T")?value.replace(" ","T")+"Z":value;
