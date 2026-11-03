@@ -154,7 +154,7 @@ async function api(request, env, url) {
     if (b.error) return fail(b.error);
     const name = text(b.name, 32);
     if (name.length < 2) return fail("Community name must be at least 2 characters.");
-    const id = uid(), invite = hex(bytes(6)), channelId = uid();
+    const id = uid(), invite = hex(bytes(16)), channelId = uid();
     try {
       await db.batch([
         db.prepare("INSERT INTO communities (id,name,owner_id,invite_code) VALUES (?,?,?,?)").bind(id, name, user.id, invite),
@@ -169,7 +169,7 @@ async function api(request, env, url) {
     const b = await body(request);
     if (b.error) return fail(b.error);
     const code = text(b.code, 32).toLowerCase();
-    if (!/^[a-f0-9]{12}$/.test(code)) return fail("That invite code is invalid.");
+    if (!/^[a-f0-9]{32}$/.test(code)) return fail("That invite code is invalid.");
     const community = await db.prepare("SELECT id,name FROM communities WHERE invite_code=? LIMIT 1").bind(code).first();
     if (!community) return fail("That invite link is invalid or expired.", 404);
     await db.prepare("INSERT OR IGNORE INTO community_members (community_id,user_id,role) VALUES (?,?,'member')").bind(community.id, user.id).run();
@@ -209,7 +209,7 @@ async function api(request, env, url) {
   if (resource === "invite" && request.method === "POST") {
     if (!originOK(request, url)) return fail("Request origin is not allowed.", 403);
     if (membership.role !== "owner") return fail("Only the owner can refresh this invite.", 403);
-    const invite = hex(bytes(6));
+    const invite = hex(bytes(16));
     await db.prepare("UPDATE communities SET invite_code=? WHERE id=?").bind(invite, communityId).run();
     return json({ invite_code: invite });
   }
