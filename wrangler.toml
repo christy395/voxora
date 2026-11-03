@@ -1,0 +1,23 @@
+name = "voxora"
+main = "src/index.js"
+compatibility_date = "2026-11-03"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "VOXORA_DB"
+database_name = "voxora-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+# When real-time messaging is implemented, enable Durable Objects here.
+# [[durable_objects.bindings]]
+# name = "CHAT_ROOMS"
+# class_name = "ChatRoom"
+
+# [[migrations]]
+# tag = "v1"
+# new_sqlite_classes = ["ChatRoom"]
