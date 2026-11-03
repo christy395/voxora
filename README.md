@@ -2,120 +2,116 @@
 
 **Connect. Chat. Play.**
 
-Voxora is a community communication platform designed to bring people together in one place. Whether you're creating a space for friends, building a gaming community, or bringing together people who share the same interests, Voxora aims to make communication feel simple, welcoming, and enjoyable.
+Voxora is a community chat platform designed to bring people together. Create a space for your friends, gaming group, creative team, or any community that wants a place to talk and grow.
 
-Our goal is to create a place where communities can have conversations, share ideas, meet new people, and grow together.
+The goal is simple: make it easy to find your people, organise conversations, and feel at home in the communities you care about.
 
 ---
 
-## About Voxora
+## Welcome to Voxora
 
-Online communities are about more than sending messages. They are places where people make friends, share experiences, work on projects, discuss their interests, and create memories.
+Communities are built through everyday conversations: meeting someone new, sharing an idea, celebrating a win, asking a question, or simply checking in.
 
-Voxora is being developed with that idea in mind. It is intended to give communities their own spaces, with organised conversations and useful ways for members to stay connected.
+Voxora brings those conversations into organised community spaces. Each community has its own channels, members, and invite link, giving people a shared place to connect.
 
-We want the experience to be easy to understand for new members while still offering room for communities to grow and make the space their own.
+## Available in the Current Release
 
-## Our Vision
+### Accounts
 
-Our vision is to make Voxora a welcoming home for online communities of all sizes.
-
-We want Voxora to grow into a platform where people can:
-
-- Create communities around their interests.
-- Have conversations in organised spaces.
-- Keep up with discussions and community updates.
-- Connect with friends and other members.
-- Build an identity for their community.
-- Enjoy a smooth and comfortable experience across devices.
-
-Voxora is a growing project, and its features will continue to develop over time.
-
-## What We're Working Towards
+Create an account with a display name, username, email address, and password. Sign in again whenever you return. Your session is protected by a secure, server-managed sign-in cookie.
 
 ### Communities
 
-Give people the ability to create and manage their own community spaces. Each community should have its own identity and a place for members to gather.
+Create a community for your group. Every new community starts with a `#general` channel, and its owner can invite other people with a shareable invite link.
 
-### Channels
+### Invite Links
 
-Keep conversations organised with separate spaces for different topics. Communities can use channels to make discussions easier to follow.
+Join a community using an invite link or invite code. Once you join, the community appears in your community list.
 
-### Messaging
+### Text Channels
 
-Make everyday conversations straightforward. Members should be able to share thoughts, reply to others, and take part in community discussions.
+Keep discussions organised with separate text channels. Community owners and moderators can create channels, and members can switch between the channels they have access to.
 
-### Friends and Direct Conversations
+### Persistent Messages
 
-Make it easier for members to stay in touch with people they know and continue conversations outside public community spaces.
+Send messages in a channel and come back to the conversation later. Messages are stored with their author and timestamp, and the channel history is loaded when you open it.
 
-### Roles and Permissions
+### Community Members
 
-Give community owners and moderators ways to organise their members and manage what different people can do.
+See the people who belong to the community, including their usernames and community roles.
 
-### Community Moderation
+### Responsive Interface
 
-Help communities stay organised and welcoming with tools for managing members and maintaining community rules.
+Use Voxora on desktop, tablet, or mobile. The layout adapts to smaller screens so your communities and conversations remain easy to reach.
 
-### Voice and More Ways to Connect
+---
 
-Our longer-term plans include additional ways for members to communicate and spend time together.
+## How to Get Started
 
-### A Comfortable Experience
+1. Open Voxora and create an account, or sign in.
+2. Create a community for your group, or choose **Join** and enter an invite code.
+3. Open a text channel such as `#general`.
+4. Send a message to start the conversation.
+5. As the community owner, use **Invite people** to share your community link.
 
-We want Voxora to feel clear, responsive, and easy to use. The interface and overall experience will continue to improve as development progresses.
+Keep your account password private. Only share invite links with people you want to join your community.
 
 ## Project Roadmap
 
-Voxora is being developed step by step. The roadmap below represents the direction of the project; it does not mean every item is available today.
+Voxora is being developed in stages. This checklist reflects what is currently implemented and what is still planned.
 
+### Core experience
 - [x] Initial project setup
-- [x] First interface and navigation concepts
-- [x] Initial community and channel layout
-- [ ] Complete account registration and sign-in
-- [ ] Save community and channel information
-- [ ] Persistent conversations and message history
-- [ ] Real-time messaging
-- [ ] Community creation and management
-- [ ] Member roles and permissions
-- [ ] Friends and direct messages
-- [ ] Moderation tools
-- [ ] File and media sharing
-- [ ] Voice and video communication
-- [ ] More settings and personalisation
-- [ ] Ongoing improvements, testing, and accessibility work
+- [x] Responsive community chat interface
+- [x] Account registration and sign-in
+- [x] Server-managed sign-in sessions
+- [x] Community creation
+- [x] Community invite links and joining by invite code
+- [x] Default channel creation
+- [x] Text channel creation and navigation
+- [x] Community member list
+- [x] Persistent messages and channel history
+- [x] Automatic message refresh while a channel is open
 
-The roadmap may change as the project develops and priorities become clearer.
+### Coming next
+- [ ] Real-time messaging without periodic refresh
+- [ ] Friend requests and direct messages
+- [ ] Expanded roles and permission controls
+- [ ] Member moderation tools
+- [ ] Profile editing and avatar customisation
+- [ ] File and image sharing
+- [ ] Voice channels and voice communication
+- [ ] Video communication
+- [ ] Notifications and message search
+- [ ] More accessibility, reliability, and performance improvements
+
+The roadmap may change as Voxora grows. A feature is marked complete only when it is implemented and working.
 
 ## Current Project Status
 
-Voxora is currently a work in progress.
+Voxora now has a working foundation for account-based communities, channels, member lists, and saved text conversations.
 
-The project has an early interface that demonstrates the direction of the experience. Some visible interactions are currently demonstrations and may not save information or work as complete features yet.
+Messages are saved and automatically refreshed while a channel is open. This is not yet full real-time messaging: instant updates, voice and video communication, file sharing, direct messages, and advanced moderation are still planned.
 
-Accounts, persistent messaging, real-time communication, and other advanced features are still being developed. We will update the project as these parts become available.
-
-Please keep this in mind when trying the current version: it is an early look at what Voxora is intended to become, not a finished platform.
+The experience will continue to improve as these features are completed and tested.
 
 ## Our Community Principles
 
-We want Voxora to support communities that are:
+We want Voxora communities to be:
 
-- **Welcoming:** Everyone should have a chance to feel included.
-- **Respectful:** Members should treat one another with respect.
-- **Safe:** Community owners and moderators should be able to establish and enforce clear rules.
-- **Creative:** Communities should have room to share ideas and express themselves.
-- **Connected:** Conversations should help people build positive connections.
+- **Welcoming:** Give people a chance to feel included.
+- **Respectful:** Treat other members with care.
+- **Safe:** Set clear expectations and community rules.
+- **Creative:** Make room for ideas, interests, and collaboration.
+- **Connected:** Build positive relationships through conversation.
 
 ## Getting Involved
 
-Voxora is an evolving project. Feedback, suggestions, and thoughtful contributions can help shape its future.
+Feedback and thoughtful suggestions help shape Voxora. When reporting a problem, include what you were trying to do, what happened, and what you expected to happen.
 
-When sharing feedback, please be clear about what you experienced, what you expected to happen, and what could be improved. Suggestions for new features and improvements are welcome.
+## Stay Connected
 
-## Stay Tuned
-
-There is more to come as Voxora continues to grow. This README will be updated as the project reaches new milestones and features become available.
+Voxora is growing one step at a time. This README will be updated whenever meaningful features are added, changed, or completed.
 
 **Voxora — Connect. Chat. Play.**
 
