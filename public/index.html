@@ -1,38 +1,379 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101018"><meta name="description" content="Voxora — your people, your space. Free community chat, voice and more.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d0b16">
+<meta name="description" content="Voxora — a welcoming space for your communities. Connect. Chat. Play.">
 <title>Voxora — Connect. Chat. Play.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#0d0d14;--panel:#151520;--panel2:#1b1b29;--panel3:#222234;--line:#29293c;--text:#f5f4ff;--muted:#9291a8;--purple:#8b6cff;--cyan:#52d8e8;--green:#54d69a;--danger:#ff7188}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px 'DM Sans',sans-serif;height:100vh;overflow:hidden}button,input{font:inherit}button{cursor:pointer;border:0;color:inherit}.app{height:100vh;display:grid;grid-template-columns:76px 244px minmax(0,1fr) 260px;background:radial-gradient(ellipse at 50% -30%,#262044 0,transparent 48%),var(--bg)}
-.servers{background:#101019;border-right:1px solid var(--line);padding:16px 12px;display:flex;align-items:center;gap:11px;flex-direction:column}.brand{width:48px;height:48px;border-radius:17px;background:linear-gradient(145deg,#a58aff,#6744ed);display:grid;place-items:center;box-shadow:0 8px 24px #805cff45;font:700 22px 'Space Grotesk'}.server{width:46px;height:46px;border-radius:16px;background:#222234;color:#c8c5dd;font-weight:800;transition:.2s;position:relative}.server:hover,.server.active{border-radius:14px;background:linear-gradient(145deg,#9577ff,#6242d8);color:white}.server.active:before{content:'';position:absolute;left:-13px;top:9px;height:28px;width:4px;border-radius:0 4px 4px 0;background:var(--cyan)}.server.add{font-size:25px;color:var(--green);background:#1a2b2a}.server-sep{height:1px;width:30px;background:var(--line)}
-.channels{background:var(--panel);display:flex;flex-direction:column;border-right:1px solid var(--line);min-width:0}.workspace-head{height:68px;padding:0 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font:700 16px 'Space Grotesk'}.workspace-head button{background:none;color:var(--muted);font-size:20px}.search{margin:16px 12px 12px;background:#101019;border:1px solid var(--line);padding:10px 12px;border-radius:9px;color:var(--muted)}.section{padding:13px 15px 7px;color:#77768f;text-transform:uppercase;letter-spacing:1.1px;font-size:10px;font-weight:800;display:flex;justify-content:space-between}.channel{padding:9px 12px;margin:2px 9px;border-radius:8px;color:#a5a3ba;display:flex;align-items:center;gap:10px;cursor:pointer}.channel:hover{background:#222234;color:#fff}.channel.active{background:#30284d;color:#d9ceff}.hash{color:#77758e;font-size:17px}.voice-card{margin:12px 10px;padding:12px;border:1px solid #34314c;border-radius:11px;background:linear-gradient(140deg,#282342,#1c1b2b)}.voice-card strong{display:block;margin-bottom:5px}.voice-card small{color:var(--muted)}.voice-btn{margin-top:10px;width:100%;background:#40316e;padding:9px;border-radius:7px;color:#ded5ff;font-weight:700}.user-panel{margin-top:auto;border-top:1px solid var(--line);padding:12px;display:flex;align-items:center;gap:9px;background:#11111a}.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,#64c8df,#8c6aff);display:grid;place-items:center;font-weight:800;color:#151322;flex:none}.user-meta{min-width:0;flex:1}.user-meta b{display:block;font-size:12px}.user-meta small{color:var(--green);font-size:10px}.icon-btn{background:none;color:var(--muted);padding:5px}.main{display:flex;flex-direction:column;min-width:0}.topbar{height:68px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 22px;gap:12px}.topbar h1{font:700 16px 'Space Grotesk';margin:0}.topbar .topic{color:var(--muted);border-left:1px solid var(--line);padding-left:13px;font-size:12px}.top-actions{margin-left:auto;display:flex;gap:8px}.top-actions button{background:transparent;color:var(--muted);padding:8px;border-radius:8px}.top-actions button:hover{background:var(--panel3);color:white}.messages{flex:1;overflow:auto;padding:22px max(22px,calc((100% - 850px)/2));display:flex;flex-direction:column;gap:20px}.welcome{padding:22px 0 18px;border-bottom:1px solid var(--line);margin-bottom:2px}.welcome h2{font:700 25px 'Space Grotesk';margin:0 0 7px}.welcome p{color:var(--muted);margin:0}.message{display:flex;gap:12px;align-items:flex-start}.message .avatar{width:38px;height:38px}.message-content{min-width:0}.message-head{display:flex;align-items:center;gap:9px;margin:2px 0 5px}.message-head b{font-size:13px}.message-head time{color:#77758c;font-size:10px}.message p{margin:0;color:#d3d1e0;line-height:1.55}.composer-wrap{padding:0 max(22px,calc((100% - 850px)/2)) 22px}.composer{border:1px solid #343348;background:#191925;border-radius:12px;display:flex;align-items:center;padding:7px 9px;gap:9px}.composer button{background:none;color:#88869f;font-size:20px}.composer input{background:none;border:0;outline:0;color:white;flex:1;min-width:0;padding:10px 2px}.send{background:linear-gradient(135deg,#9274ff,#6747df)!important;color:white!important;width:36px;height:36px;border-radius:9px;font-size:15px!important}.hint{color:#68677d;font-size:10px;margin:8px 4px 0}.members{border-left:1px solid var(--line);background:#12121b;padding:18px 13px;overflow:auto}.members h3{font-size:10px;color:#77758e;text-transform:uppercase;letter-spacing:1px;margin:12px 7px}.member{display:flex;align-items:center;gap:10px;padding:8px 7px;border-radius:8px}.member:hover{background:#20202e}.member .avatar{width:31px;height:31px;font-size:11px}.member b{font-size:12px}.member small{display:block;color:var(--muted);font-size:10px;margin-top:2px}.online-dot{width:8px;height:8px;background:var(--green);border-radius:50%;margin-left:auto;box-shadow:0 0 10px #54d69a55}
-.modal-backdrop{position:fixed;inset:0;background:#05050bd9;display:none;place-items:center;padding:20px;z-index:10}.modal-backdrop.show{display:grid}.modal{width:min(420px,100%);background:#191925;border:1px solid #37354d;border-radius:16px;padding:24px;box-shadow:0 25px 90px #0009}.modal h2{font:700 22px 'Space Grotesk';margin:0 0 8px}.modal p{color:var(--muted);line-height:1.5}.modal input{width:100%;padding:12px;background:#101019;border:1px solid var(--line);border-radius:8px;color:white;margin:12px 0}.primary{background:linear-gradient(120deg,#9274ff,#6747df);padding:11px 16px;border-radius:8px;font-weight:700}.secondary{background:#29283a;padding:11px 16px;border-radius:8px;margin-left:8px}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#29283b;border:1px solid #45415f;padding:11px 16px;border-radius:9px;display:none;z-index:20;box-shadow:0 10px 35px #0008}.toast.show{display:block}
-@media(max-width:1000px){.app{grid-template-columns:68px 220px minmax(0,1fr)}.members{display:none}}
-@media(max-width:650px){body{overflow:hidden}.app{grid-template-columns:60px minmax(0,1fr)}.channels{display:none}.servers{padding:12px 7px}.server{width:42px;height:42px}.topbar{padding:0 14px}.topbar .topic{display:none}.messages{padding:18px 14px}.composer-wrap{padding:0 12px 14px}.welcome h2{font-size:21px}}
-</style></head>
+:root{color-scheme:dark;--bg:#0d0b16;--surface:#141220;--surface2:#1b182a;--surface3:#242037;--line:#302b43;--text:#f5f2ff;--muted:#9892ad;--purple:#9472ff;--purple2:#704ce4;--cyan:#62dce8;--green:#58d7a0;--danger:#ff718b;--shadow:0 24px 80px #0008}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}.hidden{display:none!important}
+.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#a48aff,#6542d7);display:grid;place-items:center;color:white;font-size:23px;font-weight:900;box-shadow:0 8px 24px #805cff44;flex:none}.brand-word{font-size:19px;font-weight:800;letter-spacing:-.7px}.brand-word span{color:#a993ff}
+.auth-screen{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,520px);background:radial-gradient(ellipse at 17% 12%,#47327966,transparent 43%),radial-gradient(ellipse at 70% 90%,#1c627155,transparent 34%),var(--bg)}
+.auth-art{padding:58px clamp(30px,7vw,110px);display:flex;flex-direction:column;justify-content:space-between;min-height:100vh;position:relative;overflow:hidden}.auth-art:after{content:"";position:absolute;width:500px;height:500px;border:1px solid #a58aff22;border-radius:50%;left:20%;top:24%;box-shadow:0 0 0 55px #a58aff08,0 0 0 110px #a58aff06;pointer-events:none}.brand-lockup{display:flex;align-items:center;gap:13px;z-index:1}.auth-hero{max-width:650px;position:relative;z-index:1}.eyebrow{color:#b9a8ff;font-size:11px;letter-spacing:2.4px;text-transform:uppercase;font-weight:800}.auth-hero h1{font-size:clamp(42px,6vw,78px);line-height:1.02;letter-spacing:-4px;margin:18px 0 20px}.auth-hero h1 span{background:linear-gradient(110deg,#b9a4ff,#77e5ec);-webkit-background-clip:text;background-clip:text;color:transparent}.auth-hero p{font-size:16px;line-height:1.8;color:#b9b3cb;max-width:510px}.feature-points{display:flex;gap:20px;flex-wrap:wrap;margin-top:32px;color:#d5d0e4;font-size:12px}.feature-points span:before{content:"✦";color:var(--cyan);margin-right:8px}.auth-footer{color:#746f86;font-size:11px;z-index:1}
+.auth-panel{display:grid;place-items:center;padding:34px;background:#100e19dd;border-left:1px solid #ffffff0a;backdrop-filter:blur(20px)}.auth-card{width:min(100%,390px)}.auth-card .brand-lockup{display:none}.auth-card h2{font-size:28px;letter-spacing:-1px;margin:0 0 8px}.auth-card .sub{color:var(--muted);line-height:1.6;margin:0 0 28px;font-size:13px}.field{display:grid;gap:8px;margin-bottom:17px}.field label{font-size:12px;color:#d5d0e1;font-weight:700}.field input{width:100%;background:#171422;border:1px solid #353047;color:white;padding:13px 14px;border-radius:10px;min-height:46px}.field input::placeholder{color:#6f6a80}.auth-submit,.primary-btn{border:0;background:linear-gradient(110deg,var(--purple),var(--purple2));border-radius:10px;padding:13px 18px;font-weight:800;color:white;box-shadow:0 8px 24px #704ce433}.auth-submit{width:100%;margin-top:7px}.auth-submit:disabled,.primary-btn:disabled{opacity:.6;cursor:wait}.auth-switch{text-align:center;color:var(--muted);font-size:12px;margin-top:21px}.text-button{background:none;border:0;color:#b9a6ff;font-weight:800;padding:4px}.auth-error{min-height:18px;color:#ff8ca0;font-size:12px;margin:12px 0 0;line-height:1.45}
+.app-shell{height:100dvh;min-height:560px;display:grid;grid-template-columns:76px 258px minmax(300px,1fr) 240px;overflow:hidden;background:radial-gradient(ellipse at 50% -30%,#33254d55,transparent 50%),var(--bg)}
+.rail{background:#100e18;border-right:1px solid var(--line);padding:14px 11px;display:flex;align-items:center;gap:11px;flex-direction:column;z-index:4}.rail .brand-mark{margin-bottom:7px}.rail-divider{width:30px;height:1px;background:var(--line)}.community-icon{width:48px;height:48px;border-radius:16px;border:1px solid transparent;background:#242037;color:#c9c2dd;font-weight:850;font-size:13px;transition:.18s;position:relative;overflow:hidden}.community-icon:hover,.community-icon.active{border-radius:13px;background:linear-gradient(145deg,#9b7cff,#6244d3);color:white}.community-icon.active:before{content:"";position:absolute;left:-12px;top:9px;width:4px;height:28px;background:var(--cyan);border-radius:0 4px 4px 0}.community-icon.add{font-size:25px;background:#1c302d;color:var(--green)}.rail-spacer{flex:1}.rail-label{font-size:9px;color:#686279;letter-spacing:1px;text-transform:uppercase}
+.sidebar{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0;z-index:3}.side-head{height:70px;padding:0 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}.side-head strong{font-size:15px;letter-spacing:-.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.plain-icon{border:0;background:transparent;color:#a49db8;border-radius:8px;width:34px;height:34px;font-size:18px}.plain-icon:hover{background:var(--surface3);color:white}.side-actions{display:flex;gap:7px;padding:14px 13px 8px}.side-action{flex:1;border:1px solid var(--line);border-radius:9px;background:#191625;color:#bcb5d0;font-size:11px;padding:9px 8px;font-weight:700}.side-action:hover{border-color:#65518f;color:white}.channel-search{margin:8px 13px 12px;position:relative}.channel-search input{width:100%;background:#100e18;border:1px solid var(--line);border-radius:9px;padding:10px 12px 10px 33px;color:white;font-size:12px}.channel-search span{position:absolute;left:11px;top:9px;color:#827b94}.section-label{padding:12px 16px 7px;color:#79728e;text-transform:uppercase;letter-spacing:1.2px;font-size:9px;font-weight:850;display:flex;justify-content:space-between;align-items:center}.section-label button{border:0;background:transparent;color:#8f88a3;font-size:17px;border-radius:5px;width:24px;height:22px}.section-label button:hover{background:var(--surface3);color:white}.channel-list{overflow-y:auto;padding-bottom:12px}.channel-button{width:calc(100% - 18px);margin:2px 9px;border:0;background:transparent;color:#aaa4bc;border-radius:8px;padding:10px 11px;display:flex;align-items:center;gap:10px;text-align:left;font-size:12px}.channel-button .hash{font-size:17px;color:#77718a}.channel-button:hover{background:#211d30;color:white}.channel-button.active{background:#30264a;color:#e3d9ff}.channel-button.active .hash{color:#b49fff}.side-bottom{border-top:1px solid var(--line);padding:12px;background:#11101a;display:flex;align-items:center;gap:9px;margin-top:auto}.avatar{width:34px;height:34px;border-radius:12px;background:linear-gradient(140deg,#76dce0,#9878ff);display:grid;place-items:center;color:#151222;font-weight:900;flex:none;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.user-copy{min-width:0;flex:1}.user-copy b{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-copy small{display:block;color:var(--green);font-size:9px;margin-top:3px}.logout-button{border:0;background:transparent;color:#8b849b;border-radius:8px;padding:8px}.logout-button:hover{background:#302033;color:#ff9bad}
+.chat-area{display:flex;flex-direction:column;min-width:0;min-height:0}.topbar{height:70px;min-height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 22px;gap:12px;background:#100e18a8}.mobile-menu{display:none}.crumb{display:flex;align-items:center;gap:9px;min-width:0}.crumb .hash{font-size:20px;color:#817a95}.crumb h1{font-size:15px;letter-spacing:-.3px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crumb p{margin:3px 0 0;color:#8f89a1;font-size:10px}.topbar-actions{margin-left:auto;display:flex;gap:7px}.topbar-actions button{border:1px solid transparent;background:transparent;color:#a29bb2;padding:9px 11px;border-radius:9px;font-size:11px;font-weight:700}.topbar-actions button:hover{border-color:var(--line);background:var(--surface2);color:white}.topbar-actions .invite-btn{background:#2d2445;color:#d9ceff;border-color:#3b3157}
+.message-scroll{flex:1;min-height:0;overflow:auto;padding:26px clamp(18px,4vw,64px) 20px}.channel-welcome{max-width:900px;margin:0 auto 26px;padding:24px;border:1px solid #3a3153;border-radius:16px;background:linear-gradient(120deg,#211b35,#181626);position:relative;overflow:hidden}.channel-welcome:after{content:"";position:absolute;width:150px;height:150px;border:1px solid #a68dff24;border-radius:50%;right:-40px;top:-75px;box-shadow:0 0 0 25px #a68dff08,0 0 0 50px #a68dff06}.welcome-kicker{font-size:9px;color:#b8a4ff;text-transform:uppercase;letter-spacing:1.8px;font-weight:850}.channel-welcome h2{font-size:23px;letter-spacing:-.8px;margin:9px 0 7px}.channel-welcome p{color:#aaa3bb;font-size:12px;line-height:1.7;margin:0;max-width:590px}.message-list{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:19px}.empty-messages{padding:24px 4px;color:#89839a;font-size:12px}.message{display:flex;align-items:flex-start;gap:12px}.message .avatar{width:37px;height:37px;border-radius:13px}.message-main{min-width:0;flex:1}.message-meta{display:flex;align-items:center;gap:9px;margin:1px 0 5px}.message-meta b{font-size:12px}.message-meta time{color:#756e84;font-size:9px}.message-body{white-space:pre-wrap;overflow-wrap:anywhere;color:#d7d2e1;font-size:12px;line-height:1.7;margin:0}
+.composer-wrap{padding:0 clamp(18px,4vw,64px) 21px}.composer-box{max-width:900px;margin:0 auto;border:1px solid #39334c;background:#191625;border-radius:13px;padding:8px 9px 8px 14px;display:flex;align-items:flex-end;gap:8px;box-shadow:0 8px 24px #0002}.composer-box textarea{resize:none;min-height:40px;max-height:120px;flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:10px 0;font-size:12px;line-height:1.5}.composer-box textarea::placeholder{color:#777087}.send-btn{width:38px;height:38px;border:0;border-radius:10px;background:linear-gradient(145deg,#9b7bff,#6744d2);font-size:16px;font-weight:900;flex:none}.send-btn:disabled{opacity:.5;cursor:wait}.composer-note{max-width:900px;margin:8px auto 0;color:#6f697f;font-size:9px}
+.members{background:#12101b;border-left:1px solid var(--line);padding:18px 13px;overflow:auto}.members-head{padding:5px 7px 15px;display:flex;justify-content:space-between;align-items:center}.members-head b{font-size:10px;text-transform:uppercase;letter-spacing:1.1px;color:#89829b}.member-count{font-size:9px;color:#736d82}.member-row{display:flex;align-items:center;gap:9px;padding:8px 7px;border-radius:9px}.member-row:hover{background:#201d2e}.member-row .avatar{width:30px;height:30px;border-radius:10px;font-size:10px}.member-info{min-width:0}.member-info b{font-size:10px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.member-info small{font-size:9px;color:#8d879d;display:block;margin-top:3px}.role-pill{margin-left:auto;color:#a99aef;background:#2b2440;border-radius:5px;padding:3px 5px;font-size:8px;text-transform:uppercase}
+.empty-workspace{flex:1;display:grid;place-items:center;padding:30px;text-align:center}.empty-card{max-width:450px}.empty-icon{width:74px;height:74px;border-radius:24px;background:linear-gradient(145deg,#33264f,#1b2638);display:grid;place-items:center;font-size:30px;margin:0 auto 22px;border:1px solid #51436e}.empty-card h2{font-size:24px;letter-spacing:-.8px;margin:0 0 10px}.empty-card p{font-size:12px;color:var(--muted);line-height:1.8;margin:0 auto 22px}.empty-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}.primary-btn{padding:12px 17px;font-size:11px}.secondary-btn{border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:11px 16px;color:#c3bdd2;font-size:11px;font-weight:750}
+.modal-backdrop{position:fixed;inset:0;background:#07060dcc;backdrop-filter:blur(9px);display:none;place-items:center;padding:20px;z-index:20}.modal-backdrop.show{display:grid}.modal-card{width:min(430px,100%);border:1px solid #403955;border-radius:18px;background:#191625;box-shadow:var(--shadow);padding:24px}.modal-card h2{margin:0 0 8px;font-size:20px;letter-spacing:-.5px}.modal-card p{margin:0 0 20px;color:var(--muted);font-size:12px;line-height:1.65}.modal-card input{width:100%;border:1px solid var(--line);border-radius:9px;background:#100e18;color:white;padding:13px;margin-bottom:18px}.modal-actions{display:flex;justify-content:flex-end;gap:8px}.modal-actions button{font-size:11px}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 30px);background:#272238;border:1px solid #51466b;border-radius:10px;padding:11px 16px;color:#eee9ff;font-size:11px;box-shadow:var(--shadow);z-index:30;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
+.mobile-backdrop{display:none}
+@media(max-width:1180px){.app-shell{grid-template-columns:70px 235px minmax(300px,1fr)}.members{display:none}.topbar-actions .members-toggle{display:inline-flex}}
+@media(max-width:760px){.auth-screen{grid-template-columns:1fr}.auth-art{display:none}.auth-panel{min-height:100vh;padding:28px}.auth-card .brand-lockup{display:flex;margin-bottom:42px}.app-shell{grid-template-columns:62px minmax(0,1fr)}.rail{padding:12px 7px}.community-icon{width:43px;height:43px}.sidebar{position:fixed;top:0;bottom:0;left:62px;width:min(290px,calc(100vw - 62px));transform:translateX(-110%);transition:transform .22s;box-shadow:var(--shadow)}.sidebar.mobile-open{transform:translateX(0)}.mobile-backdrop.show{display:block;position:fixed;inset:0;background:#0009;z-index:2}.mobile-menu{display:inline-flex}.topbar{height:62px;min-height:62px;padding:0 12px;gap:8px}.topbar-actions button{padding:8px}.message-scroll{padding:18px 14px}.channel-welcome{padding:19px;margin-bottom:20px}.channel-welcome h2{font-size:19px}.composer-wrap{padding:0 12px 13px}.composer-note{padding:0 3px}.chat-area{grid-column:2}.empty-workspace{min-height:0}.empty-card h2{font-size:21px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
 <body>
-<div class="app">
-<aside class="servers"><div class="brand">V</div><div class="server-sep"></div><button class="server active" title="Voxora Hub">VH</button><button class="server" title="Gaming">G</button><button class="server" title="Friends">F</button><button class="server add" id="addServer" title="Create a community">+</button><div style="margin-top:auto"></div><button class="server" title="Explore">⌕</button></aside>
-<aside class="channels"><div class="workspace-head"><span id="communityName">Voxora Hub</span><button id="communityMenu">⌄</button></div><div class="search">⌕ &nbsp; Search channels</div><div class="section">Text channels <span>＋</span></div><div class="channel active" data-channel="general"><span class="hash">#</span> general</div><div class="channel" data-channel="introductions"><span class="hash">#</span> introductions</div><div class="channel" data-channel="share-your-work"><span class="hash">#</span> share-your-work</div><div class="section">Voice channels <span>＋</span></div><div class="channel" data-channel="Lounge"><span>◖</span> Lounge</div><div class="channel" data-channel="Gaming room"><span>◖</span> Gaming room</div><div class="voice-card"><strong>◖ Voice hangout</strong><small>Meet up and talk with your community.</small><button class="voice-btn" id="joinVoice">Join voice (demo)</button></div><div class="user-panel"><div class="avatar">Y</div><div class="user-meta"><b>Your profile</b><small>● Online · Demo</small></div><button class="icon-btn" title="Settings" id="settings">⚙</button></div></aside>
-<main class="main"><header class="topbar"><span class="hash">#</span><h1 id="channelTitle">general</h1><span class="topic">Welcome to your community</span><div class="top-actions"><button title="Notifications">♧</button><button title="Pinned messages">⌑</button><button title="Members" id="showMembers">♙</button></div></header><section class="messages" id="messages"><div class="welcome"><h2>Welcome to #general 👋</h2><p>This is the beginning of your community. Say hello and make yourself at home.</p></div>
-<div class="message"><div class="avatar">V</div><div class="message-content"><div class="message-head"><b>Voxira Guide</b><time>Today at 9:41 AM</time></div><p>Welcome to Voxora! Your space to chat, share, and hang out. ✨</p></div></div>
-<div class="message"><div class="avatar" style="background:linear-gradient(140deg,#f3bb79,#ef7b98)">A</div><div class="message-content"><div class="message-head"><b>Alex</b><time>Today at 9:43 AM</time></div><p>Hey everyone! Excited to be here. What games are you playing lately?</p></div></div>
-<div class="message"><div class="avatar" style="background:linear-gradient(140deg,#76d7bd,#6b9ff4)">J</div><div class="message-content"><div class="message-head"><b>Jamie</b><time>Today at 9:45 AM</time></div><p>Just exploring Voxora. The purple theme is clean 👀</p></div></div></section>
-<div class="composer-wrap"><form class="composer" id="messageForm"><button type="button" title="Attach (coming soon)" id="attach">＋</button><input id="messageInput" autocomplete="off" placeholder="Message #general"><button type="button" title="Emoji">☺</button><button class="send" aria-label="Send message">➤</button></form><div class="hint">You're using the Voxora interactive preview. Messages are local to this demo until the database is connected.</div></div></main>
-<aside class="members"><h3>Online — 3</h3><div class="member"><div class="avatar">V</div><div><b>Voxora Guide</b><small>Community helper</small></div><i class="online-dot"></i></div><div class="member"><div class="avatar" style="background:linear-gradient(140deg,#f3bb79,#ef7b98)">A</div><div><b>Alex</b><small>Playing games</small></div><i class="online-dot"></i></div><div class="member"><div class="avatar" style="background:linear-gradient(140deg,#76d7bd,#6b9ff4)">J</div><div><b>Jamie</b><small>Listening to music</small></div><i class="online-dot"></i></div><h3 style="margin-top:26px">Offline — 2</h3><div class="member"><div class="avatar" style="background:#5d536c">M</div><div><b>Morgan</b><small>Offline</small></div></div><div class="member"><div class="avatar" style="background:#6b5960">S</div><div><b>Sam</b><small>Offline</small></div></div></aside>
+<section class="auth-screen" id="authScreen">
+  <div class="auth-art">
+    <div class="brand-lockup"><div class="brand-mark">V</div><div class="brand-word">voxora<span>.</span></div></div>
+    <div class="auth-hero">
+      <div class="eyebrow">YOUR PEOPLE. YOUR SPACE.</div>
+      <h1>Bring your<br><span>community</span><br>together.</h1>
+      <p>A place for your friends, your games, your ideas, and all the conversations in between. Create a space that feels like yours.</p>
+      <div class="feature-points"><span>Spaces for every interest</span><span>Conversations that stay organised</span><span>Made for communities</span></div>
+    </div>
+    <div class="auth-footer">VOXORA · CONNECT. CHAT. PLAY.</div>
+  </div>
+  <div class="auth-panel">
+    <div class="auth-card">
+      <div class="brand-lockup"><div class="brand-mark">V</div><div class="brand-word">voxora<span>.</span></div></div>
+      <h2 id="authTitle">Welcome back</h2>
+      <p class="sub" id="authSubtitle">Sign in to continue to your communities.</p>
+      <form id="authForm">
+        <div id="registerFields" class="hidden">
+          <div class="field"><label for="displayName">Display name</label><input id="displayName" name="displayName" maxlength="32" placeholder="How people see you" autocomplete="name"></div>
+          <div class="field"><label for="username">Username</label><input id="username" name="username" maxlength="24" placeholder="your_username" autocomplete="username"></div>
+        </div>
+        <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" maxlength="254" placeholder="you@example.com" autocomplete="email" required></div>
+        <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" minlength="8" maxlength="128" placeholder="Enter your password" autocomplete="current-password" required></div>
+        <button class="auth-submit" id="authSubmit" type="submit">Sign in</button>
+      </form>
+      <div class="auth-error" id="authError" role="alert"></div>
+      <div class="auth-switch"><span id="authSwitchText">New to Voxora?</span> <button class="text-button" type="button" id="authSwitch">Create an account</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="app-shell hidden" id="appShell">
+  <aside class="rail">
+    <div class="brand-mark" aria-label="Voxora">V</div>
+    <div class="rail-divider"></div>
+    <div id="communityRail" style="display:contents"></div>
+    <button class="community-icon add" id="createCommunityRail" title="Create a community" aria-label="Create a community">+</button>
+    <div class="rail-spacer"></div>
+    <div class="rail-label">VOX</div>
+  </aside>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head"><strong id="communityTitle">Your communities</strong><button class="plain-icon" id="communityMenu" title="Community options" aria-label="Community options">⌄</button></div>
+    <div class="side-actions"><button class="side-action" id="joinCommunityBtn">＋ Join</button><button class="side-action" id="createCommunityBtn">＋ Create</button></div>
+    <div class="channel-search"><span>⌕</span><input id="channelSearch" type="search" placeholder="Find a channel" aria-label="Find a channel"></div>
+    <div class="section-label">Text channels <button id="createChannelBtn" title="Create channel" aria-label="Create channel">＋</button></div>
+    <div class="channel-list" id="channelList"></div>
+    <div class="side-bottom">
+      <div class="avatar" id="profileAvatar">Y</div>
+      <div class="user-copy"><b id="profileName">Your profile</b><small>● Signed in</small></div>
+      <button class="logout-button" id="logoutBtn" title="Sign out" aria-label="Sign out">⇥</button>
+    </div>
+  </aside>
+  <div class="mobile-backdrop" id="mobileBackdrop"></div>
+
+  <main class="chat-area">
+    <header class="topbar">
+      <button class="plain-icon mobile-menu" id="mobileMenuBtn" aria-label="Open channels">☰</button>
+      <div class="crumb"><span class="hash" id="channelHash">#</span><div style="min-width:0"><h1 id="channelTitle">Choose a community</h1><p id="channelSubtitle">Your conversations start here</p></div></div>
+      <div class="topbar-actions"><button class="invite-btn" id="inviteBtn">Invite people</button></div>
+    </header>
+    <section class="empty-workspace" id="emptyWorkspace">
+      <div class="empty-card"><div class="empty-icon">✦</div><h2>Your space starts here.</h2><p>Create a community for your people or join one with an invite code. Your channels and conversations will appear here.</p><div class="empty-actions"><button class="primary-btn" id="emptyCreateBtn">Create a community</button><button class="secondary-btn" id="emptyJoinBtn">Join with invite</button></div></div>
+    </section>
+    <section class="message-scroll hidden" id="messageScroll">
+      <div class="channel-welcome"><div class="welcome-kicker">A NEW CONVERSATION BEGINS</div><h2 id="welcomeTitle">Welcome to #general</h2><p id="welcomeDescription">This is the start of this channel. Say hello, share an idea, or start a conversation with your community.</p></div>
+      <div class="message-list" id="messageList"></div>
+    </section>
+    <div class="composer-wrap hidden" id="composerWrap">
+      <form class="composer-box" id="messageForm"><textarea id="messageInput" maxlength="2000" rows="1" placeholder="Message #general" aria-label="Write a message"></textarea><button class="send-btn" id="sendBtn" type="submit" aria-label="Send message">➤</button></form>
+      <div class="composer-note">Messages are saved to this channel and refresh automatically while you are here.</div>
+    </div>
+  </main>
+
+  <aside class="members" id="membersPanel">
+    <div class="members-head"><b>Community members</b><span class="member-count" id="memberCount">0</span></div>
+    <div id="memberList"></div>
+  </aside>
 </div>
-<div class="modal-backdrop" id="modalBackdrop"><div class="modal"><h2>Create a community</h2><p>Give your new community a name. You can customize channels and invite people later.</p><input id="newCommunityName" maxlength="32" placeholder="e.g. My Gaming Squad"><div style="text-align:right"><button class="secondary" id="cancelModal">Cancel</button><button class="primary" id="createCommunity">Create community</button></div></div></div>
-<div class="toast" id="toast"></div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Create a community</h2>
+    <p id="modalDescription">Give your community a name.</p>
+    <form id="modalForm"><label class="field"><span id="modalLabel">Community name</span><input id="modalInput" maxlength="32" autocomplete="off" placeholder="Enter a name" required></label><div class="modal-actions"><button type="button" class="secondary-btn" id="modalCancel">Cancel</button><button type="submit" class="primary-btn" id="modalSubmit">Continue</button></div></form>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
-const $=s=>document.querySelector(s);const toast=t=>{const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400)};
-function addMessage(name,text,initial='Y'){const row=document.createElement('div');row.className='message';const av=document.createElement('div');av.className='avatar';av.textContent=initial;const content=document.createElement('div');content.className='message-content';const head=document.createElement('div');head.className='message-head';const b=document.createElement('b');b.textContent=name;const time=document.createElement('time');time.textContent='Just now';head.append(b,time);const p=document.createElement('p');p.textContent=text;content.append(head,p);row.append(av,content);$('#messages').append(row);$('#messages').scrollTop=$('#messages').scrollHeight}
-$('#messageForm').addEventListener('submit',e=>{e.preventDefault();const input=$('#messageInput');const value=input.value.trim();if(!value)return;addMessage('You',value,'Y');input.value=''});
-document.querySelectorAll('.channel').forEach(el=>el.addEventListener('click',()=>{document.querySelectorAll('.channel').forEach(x=>x.classList.remove('active'));el.classList.add('active');const channel=el.dataset.channel;$('#channelTitle').textContent=channel;$('#messageInput').placeholder='Message #'+channel;$('#messages').innerHTML='';const welcome=document.createElement('div');welcome.className='welcome';const h=document.createElement('h2');h.textContent=(channel==='Lounge'||channel==='Gaming room'?'Welcome to '+channel:'Welcome to #'+channel)+' 👋';const p=document.createElement('p');p.textContent='This is the beginning of this channel. Start the conversation!';welcome.append(h,p);$('#messages').append(welcome)}));
-const modal=$('#modalBackdrop');$('#addServer').onclick=()=>{modal.classList.add('show');$('#newCommunityName').focus()};$('#communityMenu').onclick=()=>modal.classList.add('show');$('#cancelModal').onclick=()=>modal.classList.remove('show');$('#createCommunity').onclick=()=>{const n=$('#newCommunityName').value.trim();if(!n){toast('Enter a community name first.');return}$('#communityName').textContent=n;modal.classList.remove('show');$('#newCommunityName').value='';toast('Community created in this local preview. Connect D1 to save it permanently.')};
-$('#joinVoice').onclick=()=>toast('Voice chat is planned for a later milestone.');$('#attach').onclick=()=>toast('File uploads will be added with Cloudflare R2.');$('#settings').onclick=()=>toast('Account settings are coming with authentication.');$('#showMembers').onclick=()=>toast('Member list is shown on wider screens.');$('#newCommunityName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#createCommunity').click()});
-</script></body></html>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const state = { user:null, communities:[], community:null, channels:[], channel:null, members:[], messages:[], authMode:"login", modalAction:null, poll:null, loading:false };
+let toastTimer = null;
+
+function toast(message){
+  const el=$("toast"); el.textContent=message; el.classList.add("show");
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove("show"),3000);
+}
+async function api(path, options){
+  options=options||{};
+  const headers={};
+  const config={method:options.method||"GET",credentials:"same-origin",headers};
+  if(options.body!==undefined){headers["Content-Type"]="application/json";config.body=JSON.stringify(options.body);}
+  const response=await fetch(path,config);
+  const data=await response.json().catch(()=>({error:"The server returned an invalid response."}));
+  if(!response.ok){
+    if(response.status===401 && state.user && path!=="/api/auth/logout"){
+      state.user=null; stopPolling(); renderAuth("login"); $("authError").textContent="Your session ended. Please sign in again.";
+    }
+    throw new Error(data.error||"Something went wrong.");
+  }
+  return data;
+}
+function initials(value){return (value||"V").trim().split(/\\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"V";}
+function safeDate(value){
+  if(!value)return "";
+  const normalized=value.includes(" ")&&!value.includes("T")?value.replace(" ","T")+"Z":value;
+  const d=new Date(normalized);
+  if(Number.isNaN(d.getTime()))return "";
+  const today=new Date();
+  return d.toDateString()===today.toDateString()?d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}):d.toLocaleDateString([], {month:"short",day:"numeric"});
+}
+function stopPolling(){if(state.poll){clearInterval(state.poll);state.poll=null;}}
+function renderAuth(mode){
+  stopPolling(); state.authMode=mode||"login";
+  $("appShell").classList.add("hidden"); $("authScreen").classList.remove("hidden");
+  const registering=state.authMode==="register";
+  $("authTitle").textContent=registering?"Create your account":"Welcome back";
+  $("authSubtitle").textContent=registering?"Make a home for your communities.":"Sign in to continue to your communities.";
+  $("registerFields").classList.toggle("hidden",!registering);
+  $("authSubmit").textContent=registering?"Create account":"Sign in";
+  $("authSwitchText").textContent=registering?"Already have an account?":"New to Voxora?";
+  $("authSwitch").textContent=registering?"Sign in":"Create an account";
+  $("password").autocomplete=registering?"new-password":"current-password";
+  $("authError").textContent="";
+}
+$("authSwitch").addEventListener("click",()=>renderAuth(state.authMode==="login"?"register":"login"));
+$("authForm").addEventListener("submit",async e=>{
+  e.preventDefault(); if(state.loading)return;
+  const registering=state.authMode==="register";
+  const payload={email:$("email").value.trim(),password:$("password").value};
+  if(registering){payload.displayName=$("displayName").value.trim();payload.username=$("username").value.trim();}
+  state.loading=true; $("authSubmit").disabled=true; $("authSubmit").textContent=registering?"Creating account…":"Signing in…"; $("authError").textContent="";
+  try{
+    const data=await api(registering?"/api/auth/register":"/api/auth/login",{method:"POST",body:payload});
+    state.user=data.user; await startWorkspace();
+  }catch(err){$("authError").textContent=err.message;}
+  finally{state.loading=false;$("authSubmit").disabled=false;$("authSubmit").textContent=registering?"Create account":"Sign in";}
+});
+async function checkSession(){
+  try{const data=await api("/api/auth/me");state.user=data.user;await startWorkspace();}
+  catch(err){if(err.message!=="You are not signed in.")$("authError").textContent=err.message;}
+}
+function renderProfile(){
+  $("profileName").textContent=state.user.display_name||state.user.username;
+  $("profileAvatar").textContent=initials(state.user.display_name||state.user.username);
+}
+function renderRail(){
+  const rail=$("communityRail");rail.innerHTML="";
+  state.communities.forEach(c=>{
+    const btn=document.createElement("button");btn.className="community-icon"+(state.community&&state.community.id===c.id?" active":"");
+    btn.title=c.name;btn.setAttribute("aria-label",c.name);btn.textContent=initials(c.name).slice(0,2);
+    btn.addEventListener("click",()=>selectCommunity(c.id));rail.append(btn);
+  });
+}
+function renderChannels(){
+  const list=$("channelList");list.innerHTML="";
+  const query=$("channelSearch").value.trim().toLowerCase();
+  state.channels.filter(c=>c.name.toLowerCase().includes(query)).forEach(c=>{
+    const btn=document.createElement("button");btn.className="channel-button"+(state.channel&&state.channel.id===c.id?" active":"");
+    const hash=document.createElement("span");hash.className="hash";hash.textContent="#";
+    const name=document.createElement("span");name.textContent=c.name;
+    btn.append(hash,name);btn.addEventListener("click",()=>selectChannel(c.id));list.append(btn);
+  });
+  $("createChannelBtn").classList.toggle("hidden",!state.community||!(state.community.role==="owner"||state.community.role==="moderator"));
+}
+function renderMembers(){
+  const list=$("memberList");list.innerHTML="";$("memberCount").textContent=String(state.members.length);
+  if(!state.members.length){const p=document.createElement("p");p.className="empty-messages";p.textContent="No members to show yet.";list.append(p);return;}
+  state.members.forEach(m=>{
+    const row=document.createElement("div");row.className="member-row";
+    const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=initials(m.display_name||m.username);
+    const info=document.createElement("div");info.className="member-info";
+    const name=document.createElement("b");name.textContent=m.display_name||m.username;
+    const handle=document.createElement("small");handle.textContent="@"+m.username;
+    info.append(name,handle);row.append(avatar,info);
+    if(m.role==="owner"||m.role==="moderator"){const role=document.createElement("span");role.className="role-pill";role.textContent=m.role;row.append(role);}
+    list.append(row);
+  });
+}
+function renderMessages(keepPosition){
+  const list=$("messageList");const scroller=$("messageScroll");
+  const wasNearBottom=scroller.scrollHeight-scroller.scrollTop-scroller.clientHeight<110;
+  list.innerHTML="";
+  if(!state.messages.length){const empty=document.createElement("div");empty.className="empty-messages";empty.textContent="No messages here yet. Start the conversation.";list.append(empty);}
+  state.messages.forEach(m=>{
+    const row=document.createElement("article");row.className="message";
+    const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=initials(m.display_name||m.username);
+    const main=document.createElement("div");main.className="message-main";
+    const meta=document.createElement("div");meta.className="message-meta";
+    const name=document.createElement("b");name.textContent=m.display_name||m.username;
+    const time=document.createElement("time");time.textContent=safeDate(m.created_at);
+    meta.append(name,time);
+    const body=document.createElement("p");body.className="message-body";body.textContent=m.body;
+    main.append(meta,body);row.append(avatar,main);list.append(row);
+  });
+  if(!keepPosition||wasNearBottom)scroller.scrollTop=scroller.scrollHeight;
+}
+async function loadMessages(silent){
+  if(!state.community||!state.channel)return;
+  try{
+    const data=await api("/api/communities/"+encodeURIComponent(state.community.id)+"/messages?channelId="+encodeURIComponent(state.channel.id));
+    state.messages=data.messages||[];renderMessages(silent);
+  }catch(err){if(!silent)toast(err.message);}
+}
+async function loadCommunity(id){
+  stopPolling();
+  const community=state.communities.find(c=>c.id===id);
+  if(!community)return;
+  state.community=community;state.channel=null;state.channels=[];state.members=[];state.messages=[];
+  renderRail();$("communityTitle").textContent=community.name;$("channelTitle").textContent="Loading…";$("channelSubtitle").textContent="Getting your channels ready";
+  $("emptyWorkspace").classList.add("hidden");$("messageScroll").classList.remove("hidden");$("composerWrap").classList.remove("hidden");
+  $("messageList").innerHTML="";
+  try{
+    const results=await Promise.all([
+      api("/api/communities/"+encodeURIComponent(id)+"/channels"),
+      api("/api/communities/"+encodeURIComponent(id)+"/members")
+    ]);
+    state.channels=results[0].channels||[];state.members=results[1].members||[];
+    renderChannels();renderMembers();
+    if(state.channels.length)await selectChannel(state.channels[0].id);
+    else{$("channelTitle").textContent="No channels";$("welcomeTitle").textContent="No channels yet";$("welcomeDescription").textContent="A community owner can add a text channel to start conversations.";$("messageList").innerHTML="";$("composerWrap").classList.add("hidden");}
+  }catch(err){toast(err.message);}
+}
+async function selectCommunity(id){$("sidebar").classList.remove("mobile-open");$("mobileBackdrop").classList.remove("show");await loadCommunity(id);}
+async function selectChannel(id){
+  const channel=state.channels.find(c=>c.id===id);if(!channel)return;
+  state.channel=channel;renderChannels();
+  $("channelHash").textContent="#";$("channelTitle").textContent=channel.name;
+  $("channelSubtitle").textContent=state.community.name+" · Text channel";
+  $("welcomeTitle").textContent="Welcome to #"+channel.name;
+  $("messageInput").placeholder="Message #"+channel.name;
+  $("messageInput").value="";
+  await loadMessages(false);
+  stopPolling();state.poll=setInterval(()=>loadMessages(true),6000);
+}
+async function refreshCommunities(){
+  const data=await api("/api/communities");state.communities=data.communities||[];
+  renderRail();
+  if(state.communities.length===0){
+    state.community=null;state.channels=[];state.channel=null;state.members=[];
+    $("communityTitle").textContent="Your communities";$("channelTitle").textContent="Your space";$("channelSubtitle").textContent="Create or join a community";
+    $("channelHash").textContent="✦";$("emptyWorkspace").classList.remove("hidden");$("messageScroll").classList.add("hidden");$("composerWrap").classList.add("hidden");
+    $("channelList").innerHTML="";$("memberList").innerHTML="";$("memberCount").textContent="0";
+  }else{
+    const keep=state.community&&state.communities.find(c=>c.id===state.community.id);
+    await loadCommunity(keep?keep.id:state.communities[0].id);
+  }
+}
+async function startWorkspace(){
+  $("authScreen").classList.add("hidden");$("appShell").classList.remove("hidden");renderProfile();
+  await refreshCommunities();
+  const params=new URLSearchParams(location.search);const invite=params.get("invite");
+  if(invite){
+    try{const joined=await api("/api/invites/join",{method:"POST",body:{code:invite}});history.replaceState({}, "", location.pathname);await refreshCommunities();toast("You joined "+joined.community.name+".");}
+    catch(err){history.replaceState({}, "", location.pathname);toast(err.message);}
+  }
+}
+function openModal(title,description,label,placeholder,button,action){
+  $("modalTitle").textContent=title;$("modalDescription").textContent=description;
+  $("modalLabel").textContent=label;$("modalInput").placeholder=placeholder||"";
+  $("modalInput").value="";$("modalInput").readOnly=false;$("modalInput").maxLength=64;
+  $("modalSubmit").textContent=button||"Continue";$("modalSubmit").disabled=false;
+  state.modalAction=action;$("modalBackdrop").classList.add("show");
+  setTimeout(()=>$("modalInput").focus(),40);
+}
+function closeModal(){$("modalBackdrop").classList.remove("show");state.modalAction=null;}
+$("modalCancel").addEventListener("click",closeModal);
+$("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeModal();});
+$("modalForm").addEventListener("submit",async e=>{
+  e.preventDefault();if(!state.modalAction)return;
+  const value=$("modalInput").value.trim();if(!value)return;
+  $("modalSubmit").disabled=true;
+  try{await state.modalAction(value);closeModal();}
+  catch(err){toast(err.message);$("modalSubmit").disabled=false;}
+});
+function createCommunityDialog(){
+  openModal("Create a community","Give your space a name. A #general channel will be ready for your first conversation.","Community name","e.g. The Gaming Corner","Create community",async name=>{
+    const data=await api("/api/communities",{method:"POST",body:{name}});
+    await refreshCommunities();await selectCommunity(data.community.id);toast("Your community is ready.");
+  });
+}
+function joinDialog(){
+  openModal("Join a community","Paste the 12-character invite code shared by a community member.","Invite code","e.g. a1b2c3d4e5f6","Join community",async code=>{
+    const data=await api("/api/invites/join",{method:"POST",body:{code:code.toLowerCase()}});
+    await refreshCommunities();await selectCommunity(data.community.id);toast("You joined "+data.community.name+".");
+  });
+}
+function createChannelDialog(){
+  if(!state.community)return;
+  openModal("Create a channel","Give this channel a short name. Spaces will become hyphens.","Channel name","e.g. clips-and-highlights","Create channel",async name=>{
+    const data=await api("/api/communities/"+encodeURIComponent(state.community.id)+"/channels",{method:"POST",body:{name}});
+    state.channels.push(data.channel);renderChannels();await selectChannel(data.channel.id);toast("Channel created.");
+  });
+}
+async function invitePeople(){
+  if(!state.community){toast("Choose a community first.");return;}
+  let code=state.community.invite_code;
+  if(!code){toast("Ask the community owner for an invite link.");return;}
+  const link=location.origin+location.pathname+"?invite="+code;
+  try{await navigator.clipboard.writeText(link);toast("Invite link copied. Share it with your friends.");}
+  catch{openModal("Your invite link","Copy this link and share it with people you want to invite.","Invite link",link,"Done",async()=>{});$("modalInput").value=link;$("modalInput").readOnly=true;}
+}
+$("createCommunityRail").addEventListener("click",createCommunityDialog);
+$("createCommunityBtn").addEventListener("click",createCommunityDialog);
+$("emptyCreateBtn").addEventListener("click",createCommunityDialog);
+$("joinCommunityBtn").addEventListener("click",joinDialog);
+$("emptyJoinBtn").addEventListener("click",joinDialog);
+$("createChannelBtn").addEventListener("click",createChannelDialog);
+$("inviteBtn").addEventListener("click",invitePeople);
+$("communityMenu").addEventListener("click",()=>state.community?invitePeople():createCommunityDialog());
+$("channelSearch").addEventListener("input",renderChannels);
+$("mobileMenuBtn").addEventListener("click",()=>{$("sidebar").classList.add("mobile-open");$("mobileBackdrop").classList.add("show");});
+$("mobileBackdrop").addEventListener("click",()=>{$("sidebar").classList.remove("mobile-open");$("mobileBackdrop").classList.remove("show");});
+$("messageForm").addEventListener("submit",async e=>{
+  e.preventDefault();const value=$("messageInput").value.trim();
+  if(!value||!state.community||!state.channel)return;
+  $("sendBtn").disabled=true;
+  try{
+    await api("/api/communities/"+encodeURIComponent(state.community.id)+"/messages",{method:"POST",body:{channelId:state.channel.id,body:value}});
+    $("messageInput").value="";$("messageInput").style.height="40px";await loadMessages(false);
+  }catch(err){toast(err.message);}
+  finally{$("sendBtn").disabled=false;$("messageInput").focus();}
+});
+$("messageInput").addEventListener("input",e=>{e.target.style.height="40px";e.target.style.height=Math.min(e.target.scrollHeight,120)+"px";});
+$("messageInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("messageForm").requestSubmit();}});
+$("logoutBtn").addEventListener("click",async()=>{
+  try{await api("/api/auth/logout",{method:"POST"});}catch{}
+  state.user=null;state.community=null;state.communities=[];stopPolling();renderAuth("login");$("email").value="";$("password").value="";toast("You have signed out.");
+});
+renderAuth("login");
+checkSession();
+})();
+</script>
+</body>
+</html>
