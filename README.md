@@ -74,6 +74,7 @@ Voxora is being developed in stages. This checklist reflects what is currently i
 - [x] Automatic message refresh while a channel is open
 
 ### Coming next
+- [ ] Email verification and account recovery
 - [ ] Real-time messaging without periodic refresh
 - [ ] Friend requests and direct messages
 - [ ] Expanded roles and permission controls
@@ -91,7 +92,7 @@ The roadmap may change as Voxora grows. A feature is marked complete only when i
 
 Voxora now has a working foundation for account-based communities, channels, member lists, and saved text conversations.
 
-Messages are saved and automatically refreshed while a channel is open. This is not yet full real-time messaging: instant updates, voice and video communication, file sharing, direct messages, and advanced moderation are still planned.
+Messages are saved and the latest channel history is loaded when you open a channel. New messages refresh automatically while the channel is open, but updates are not instant yet. Email verification, account recovery, voice and video communication, file sharing, direct messages, and advanced moderation are still planned.
 
 The experience will continue to improve as these features are completed and tested.
 
