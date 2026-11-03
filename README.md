@@ -26,7 +26,7 @@ Create a community for your group. Every new community starts with a `#general` 
 
 ### Invite Links
 
-Join a community using an invite link or invite code. Once you join, the community appears in your community list.
+Join a community using an invite link or its 32-character invite code. Once you join, the community appears in your community list.
 
 ### Text Channels
 
