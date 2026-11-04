@@ -60,18 +60,34 @@ const SCHEMA_SQL = [
   "CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)",
   "CREATE INDEX IF NOT EXISTS idx_messages_channel_created_id ON messages(channel_id, created_at, id)"
 ];
-let schemaPromise = null;
+// Cache setup per D1 binding, not globally: this avoids reusing a ready
+// promise if a test, preview, or deployment supplies a different database.
+const schemaPromises = new WeakMap();
+const SCHEMA_CHECKS = [
+  "SELECT id,username,display_name,email,password_hash,avatar_url,created_at FROM users LIMIT 0",
+  "SELECT id,user_id,expires_at,created_at FROM sessions LIMIT 0",
+  "SELECT id,name,owner_id,invite_code,created_at FROM communities LIMIT 0",
+  "SELECT community_id,user_id,role,joined_at FROM community_members LIMIT 0",
+  "SELECT id,community_id,name,kind,position FROM channels LIMIT 0",
+  "SELECT id,channel_id,author_id,body,created_at FROM messages LIMIT 0"
+];
 
 async function ensureDatabaseSchema(db) {
-  if (!schemaPromise) {
-    schemaPromise = Promise.resolve()
-      .then(() => db.batch(SCHEMA_SQL.map(sql => db.prepare(sql))))
-      .catch(error => {
-        schemaPromise = null;
-        throw error;
-      });
+  if (!db || (typeof db !== "object" && typeof db !== "function")) {
+    throw new Error("A valid D1 database binding is required.");
   }
-  return schemaPromise;
+  let pending = schemaPromises.get(db);
+  if (!pending) {
+    pending = (async () => {
+      await db.batch(SCHEMA_SQL.map(sql => db.prepare(sql)));
+      await Promise.all(SCHEMA_CHECKS.map(sql => db.prepare(sql).all()));
+    })();
+    schemaPromises.set(db, pending);
+    pending.catch(() => {
+      if (schemaPromises.get(db) === pending) schemaPromises.delete(db);
+    });
+  }
+  return pending;
 }
 
 function json(data, status = 200, extra = {}) {
@@ -181,60 +197,91 @@ async function api(request, env, url) {
     if (!originOK(request, url)) return fail("Request origin is not allowed.", 403);
     const b = await body(request);
     if (b.error) return fail(b.error);
+
     const username = text(b.username, 24).toLowerCase();
     const displayName = text(b.displayName, 32);
     const email = text(b.email, 254).toLowerCase();
     const password = typeof b.password === "string" ? b.password : "";
-    if (!usernameOK(username)) return fail("Username must be 3–24 characters using letters, numbers, or underscores.");
+
+    if (!usernameOK(username)) return fail("Username must be 3–24 characters using lowercase letters, numbers, or underscores.");
     if (displayName.length < 2) return fail("Display name must be at least 2 characters.");
     if (!emailOK(email)) return fail("Enter a valid email address.");
     if (password.length < 8 || password.length > 128) return fail("Password must be 8–128 characters.");
-    const existing = await db.prepare("SELECT username,email FROM users WHERE lower(username)=? OR lower(email)=? LIMIT 1")
-      .bind(username, email).first();
-    if (existing) {
-      const sameUsername = String(existing.username || "").toLowerCase() === username;
-      const sameEmail = String(existing.email || "").toLowerCase() === email;
-      if (sameUsername && sameEmail) return fail("That username and email are already registered.", 409);
-      if (sameUsername) return fail("That username is already taken. Choose another username.", 409);
-      return fail("That email is already registered. Sign in or use another email.", 409);
-    }
-    const id = uid();
-    const storedPassword = await passwordHash(password);
-    const token = b64(bytes(32));
-    const sessionId = await digest(token);
-    const expiresAt = new Date(Date.now() + DAYS * 86400000).toISOString();
+
     try {
-      // D1 batch is transactional: the account and its first session either
-      // both exist or neither does.
+      // Pre-check for clear feedback. The unique constraints below remain the
+      // final protection against two requests racing to claim the same value.
+      const existing = await db.prepare(
+        "SELECT username,email FROM users WHERE lower(username)=? OR lower(email)=? LIMIT 1"
+      ).bind(username, email).first();
+
+      if (existing) {
+        const sameUsername = String(existing.username || "").toLowerCase() === username;
+        const sameEmail = String(existing.email || "").toLowerCase() === email;
+        if (sameUsername && sameEmail) return fail("That username and email are already registered.", 409);
+        if (sameUsername) return fail("That username is already taken. Choose another username.", 409);
+        return fail("That email is already registered. Sign in or use another email.", 409);
+      }
+
+      const id = uid();
+      const storedPassword = await passwordHash(password);
+      const token = b64(bytes(32));
+      const sessionId = await digest(token);
+      const expiresAt = new Date(Date.now() + DAYS * 86400000).toISOString();
+
+      // D1 batch executes these statements transactionally. A user cannot be
+      // left behind without the initial session, or vice versa.
       await db.batch([
         db.prepare("INSERT INTO users (id,username,display_name,email,password_hash) VALUES (?,?,?,?,?)")
           .bind(id, username, displayName, email, storedPassword),
         db.prepare("INSERT INTO sessions (id,user_id,expires_at) VALUES (?,?,?)")
           .bind(sessionId, id, expiresAt)
       ]);
+
+      return json({
+        user: { id, username, display_name: displayName, email, avatar_url: null }
+      }, 201, { "set-cookie": cookie(request, token) });
     } catch (error) {
       const message = String(error?.message || error).toLowerCase();
-      if (message.includes("unique constraint failed")) {
-        return fail("That username or email is already registered. Please try another.", 409);
+      if (message.includes("unique constraint failed: users.username")) {
+        return fail("That username is already taken. Choose another username.", 409);
       }
-      console.error("Voxora registration database error:", error);
-      return fail("We couldn't create your account right now. Please try again.", 500);
+      if (message.includes("unique constraint failed: users.email")) {
+        return fail("That email is already registered. Sign in or use another email.", 409);
+      }
+      console.error("Voxora registration failed:", error);
+      return fail("Voxora couldn't finish creating your account. Please try again.", 500);
     }
-    const user = { id, username, display_name: displayName, email, avatar_url: null };
-    return json({ user }, 201, { "set-cookie": cookie(request, token) });
   }
   if (url.pathname === "/api/auth/login" && request.method === "POST") {
     if (!originOK(request, url)) return fail("Request origin is not allowed.", 403);
     const b = await body(request);
     if (b.error) return fail(b.error);
-    const email = text(b.email, 254).toLowerCase();
+
+    // Accept either email or username; "email" remains supported for older
+    // clients so existing app versions do not suddenly stop signing in.
+    const identifier = text(b.identifier || b.email, 254).toLowerCase();
     const password = typeof b.password === "string" ? b.password : "";
-    if (!emailOK(email) || !password || password.length > 128) return fail("Email or password is incorrect.", 401);
-    const row = await db.prepare("SELECT id,username,display_name,email,avatar_url,password_hash FROM users WHERE lower(email)=? LIMIT 1").bind(email).first();
-    if (!row || !(await passwordMatches(password, row.password_hash))) return fail("Email or password is incorrect.", 401);
-    const setCookie = await newSession(db, row.id, request);
-    delete row.password_hash;
-    return json({ user: row }, 200, { "set-cookie": setCookie });
+    if (!identifier || !password || password.length > 128) {
+      return fail("Enter your email or username and password.", 400);
+    }
+
+    try {
+      const row = await db.prepare(
+        "SELECT id,username,display_name,email,avatar_url,password_hash FROM users WHERE lower(email)=? OR lower(username)=? LIMIT 1"
+      ).bind(identifier, identifier).first();
+
+      if (!row || !(await passwordMatches(password, row.password_hash))) {
+        return fail("Email/username or password is incorrect.", 401);
+      }
+
+      const setCookie = await newSession(db, row.id, request);
+      delete row.password_hash;
+      return json({ user: row }, 200, { "set-cookie": setCookie });
+    } catch (error) {
+      console.error("Voxora sign-in failed:", error);
+      return fail("Voxora couldn't sign you in right now. Please try again.", 500);
+    }
   }
 
   const user = await session(db, request);
@@ -352,11 +399,17 @@ export default {
     if (url.pathname === "/api/health" && request.method === "GET") {
       const databaseConfigured = Boolean(env.VOXORA_DB && typeof env.VOXORA_DB.prepare === "function");
       if (!databaseConfigured) {
-        return json({ ok: true, app: "Voxora", databaseConfigured: false, databaseReady: false });
+        return json({ ok: false, app: "Voxora", databaseConfigured: false, databaseReady: false }, 503);
       }
       try {
         await ensureDatabaseSchema(env.VOXORA_DB);
-        return json({ ok: true, app: "Voxora", databaseConfigured: true, databaseReady: true });
+        return json({
+          ok: true,
+          app: "Voxora",
+          databaseConfigured: true,
+          databaseReady: true,
+          auth: { registration: true, signIn: true, sessions: true }
+        });
       } catch (error) {
         console.error("Voxora health database check failed:", error);
         return json({ ok: false, app: "Voxora", databaseConfigured: true, databaseReady: false }, 503);
@@ -365,8 +418,12 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       try { return await api(request, env, url); }
       catch (error) {
-        console.error("Voxora API request failed:", url.pathname, error);
-        return fail("Something went wrong. Please try again.", 500);
+        console.error("Voxora API request failed:", {
+          path: url.pathname,
+          method: request.method,
+          error: String(error?.stack || error)
+        });
+        return fail("Voxora couldn't complete that request. Please try again.", 500);
       }
     }
     if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") return new Response("Voxora web assets are not configured.", { status: 503 });
