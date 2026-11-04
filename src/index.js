@@ -116,11 +116,27 @@ async function api(request, env, url) {
     if (displayName.length < 2) return fail("Display name must be at least 2 characters.");
     if (!emailOK(email)) return fail("Enter a valid email address.");
     if (password.length < 8 || password.length > 128) return fail("Password must be 8–128 characters.");
+    const existing = await db.prepare("SELECT username,email FROM users WHERE lower(username)=? OR lower(email)=? LIMIT 1")
+      .bind(username, email).first();
+    if (existing) {
+      const sameUsername = String(existing.username || "").toLowerCase() === username;
+      const sameEmail = String(existing.email || "").toLowerCase() === email;
+      if (sameUsername && sameEmail) return fail("That username and email are already registered.", 409);
+      if (sameUsername) return fail("That username is already taken. Choose another username.", 409);
+      return fail("That email is already registered. Sign in or use another email.", 409);
+    }
     const id = uid();
     try {
       await db.prepare("INSERT INTO users (id,username,display_name,email,password_hash) VALUES (?,?,?,?,?)")
         .bind(id, username, displayName, email, await passwordHash(password)).run();
-    } catch { return fail("That username or email is already registered.", 409); }
+    } catch (error) {
+      const message = String(error?.message || error).toLowerCase();
+      if (message.includes("unique constraint failed") || message.includes("constraint failed")) {
+        return fail("That username or email is already registered. Please try another.", 409);
+      }
+      console.error("Voxora registration database error:", error);
+      return fail("We couldn't create your account right now. Please try again.", 500);
+    }
     const setCookie = await newSession(db, id, request);
     const user = await db.prepare("SELECT id,username,display_name,email,avatar_url FROM users WHERE id=?").bind(id).first();
     return json({ user }, 201, { "set-cookie": setCookie });
