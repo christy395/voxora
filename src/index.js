@@ -272,7 +272,10 @@ export default {
     }
     if (url.pathname.startsWith("/api/")) {
       try { return await api(request, env, url); }
-      catch { return fail("Something went wrong. Please try again.", 500); }
+      catch (error) {
+        console.error("Voxora API request failed:", url.pathname, error);
+        return fail("Something went wrong. Please try again.", 500);
+      }
     }
     if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") return new Response("Voxora web assets are not configured.", { status: 503 });
     return env.ASSETS.fetch(request);
