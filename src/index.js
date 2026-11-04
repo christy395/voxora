@@ -7,6 +7,73 @@ const DAYS = 30;
 const ITERATIONS = 210000;
 const encoder = new TextEncoder();
 
+// Keep the Worker usable even when a D1 database was bound before its migrations
+// were applied. Every statement is idempotent, and the normal migration files
+// remain compatible with this bootstrap.
+const SCHEMA_SQL = [
+  `CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    display_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    avatar_url TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+  `CREATE TABLE IF NOT EXISTS sessions (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expires_at TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+  `CREATE TABLE IF NOT EXISTS communities (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    owner_id TEXT NOT NULL REFERENCES users(id),
+    invite_code TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+  `CREATE TABLE IF NOT EXISTS community_members (
+    community_id TEXT NOT NULL REFERENCES communities(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role TEXT NOT NULL DEFAULT 'member',
+    joined_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (community_id, user_id)
+  )`,
+  `CREATE TABLE IF NOT EXISTS channels (
+    id TEXT PRIMARY KEY,
+    community_id TEXT NOT NULL REFERENCES communities(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    kind TEXT NOT NULL DEFAULT 'text',
+    position INTEGER NOT NULL DEFAULT 0
+  )`,
+  `CREATE TABLE IF NOT EXISTS messages (
+    id TEXT PRIMARY KEY,
+    channel_id TEXT NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+    author_id TEXT NOT NULL REFERENCES users(id),
+    body TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_messages_channel_created ON messages(channel_id, created_at)",
+  "CREATE INDEX IF NOT EXISTS idx_members_user ON community_members(user_id)",
+  "CREATE INDEX IF NOT EXISTS idx_channels_community_position ON channels(community_id, position, name)",
+  "CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)",
+  "CREATE INDEX IF NOT EXISTS idx_messages_channel_created_id ON messages(channel_id, created_at, id)"
+];
+let schemaPromise = null;
+
+async function ensureDatabaseSchema(db) {
+  if (!schemaPromise) {
+    schemaPromise = Promise.resolve()
+      .then(() => db.batch(SCHEMA_SQL.map(sql => db.prepare(sql))))
+      .catch(error => {
+        schemaPromise = null;
+        throw error;
+      });
+  }
+  return schemaPromise;
+}
+
 function json(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), { status, headers: { ...HEADERS, ...extra } });
 }
@@ -94,6 +161,12 @@ async function member(db, communityId, userId) {
 async function api(request, env, url) {
   const db = env.VOXORA_DB;
   if (!db || typeof db.prepare !== "function") return fail("The Voxora database is not connected.", 503);
+  try {
+    await ensureDatabaseSchema(db);
+  } catch (error) {
+    console.error("Voxora database initialization failed:", error);
+    return fail("Voxora's database could not be prepared. Please try again later.", 503);
+  }
 
   if (url.pathname === "/api/auth/me" && request.method === "GET") {
     const user = await session(db, request);
@@ -126,20 +199,29 @@ async function api(request, env, url) {
       return fail("That email is already registered. Sign in or use another email.", 409);
     }
     const id = uid();
+    const storedPassword = await passwordHash(password);
+    const token = b64(bytes(32));
+    const sessionId = await digest(token);
+    const expiresAt = new Date(Date.now() + DAYS * 86400000).toISOString();
     try {
-      await db.prepare("INSERT INTO users (id,username,display_name,email,password_hash) VALUES (?,?,?,?,?)")
-        .bind(id, username, displayName, email, await passwordHash(password)).run();
+      // D1 batch is transactional: the account and its first session either
+      // both exist or neither does.
+      await db.batch([
+        db.prepare("INSERT INTO users (id,username,display_name,email,password_hash) VALUES (?,?,?,?,?)")
+          .bind(id, username, displayName, email, storedPassword),
+        db.prepare("INSERT INTO sessions (id,user_id,expires_at) VALUES (?,?,?)")
+          .bind(sessionId, id, expiresAt)
+      ]);
     } catch (error) {
       const message = String(error?.message || error).toLowerCase();
-      if (message.includes("unique constraint failed") || message.includes("constraint failed")) {
+      if (message.includes("unique constraint failed")) {
         return fail("That username or email is already registered. Please try another.", 409);
       }
       console.error("Voxora registration database error:", error);
       return fail("We couldn't create your account right now. Please try again.", 500);
     }
-    const setCookie = await newSession(db, id, request);
-    const user = await db.prepare("SELECT id,username,display_name,email,avatar_url FROM users WHERE id=?").bind(id).first();
-    return json({ user }, 201, { "set-cookie": setCookie });
+    const user = { id, username, display_name: displayName, email, avatar_url: null };
+    return json({ user }, 201, { "set-cookie": cookie(request, token) });
   }
   if (url.pathname === "/api/auth/login" && request.method === "POST") {
     if (!originOK(request, url)) return fail("Request origin is not allowed.", 403);
@@ -268,7 +350,17 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/health" && request.method === "GET") {
-      return json({ ok: true, app: "Voxora", databaseConfigured: Boolean(env.VOXORA_DB && typeof env.VOXORA_DB.prepare === "function") });
+      const databaseConfigured = Boolean(env.VOXORA_DB && typeof env.VOXORA_DB.prepare === "function");
+      if (!databaseConfigured) {
+        return json({ ok: true, app: "Voxora", databaseConfigured: false, databaseReady: false });
+      }
+      try {
+        await ensureDatabaseSchema(env.VOXORA_DB);
+        return json({ ok: true, app: "Voxora", databaseConfigured: true, databaseReady: true });
+      } catch (error) {
+        console.error("Voxora health database check failed:", error);
+        return json({ ok: false, app: "Voxora", databaseConfigured: true, databaseReady: false }, 503);
+      }
     }
     if (url.pathname.startsWith("/api/")) {
       try { return await api(request, env, url); }
