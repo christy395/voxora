@@ -47,11 +47,11 @@
       <p class="sub" id="authSubtitle">Sign in to continue to your communities.</p>
       <form id="authForm">
         <div id="registerFields" class="hidden">
-          <div class="field"><label for="displayName">Display name</label><input id="displayName" name="displayName" maxlength="32" placeholder="How people see you" autocomplete="name"></div>
-          <div class="field"><label for="username">Username</label><input id="username" name="username" maxlength="24" placeholder="your_username" autocomplete="username"></div>
+          <div class="field"><label for="displayName">Display name</label><input id="displayName" name="displayName" maxlength="32" minlength="2" placeholder="How people see you" autocomplete="name" disabled></div>
+          <div class="field"><label for="username">Username</label><input id="username" name="username" maxlength="24" minlength="3" pattern="[A-Za-z0-9_]{3,24}" placeholder="your_username" autocomplete="username" disabled></div>
         </div>
-        <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" maxlength="254" placeholder="you@example.com" autocomplete="email" required></div>
-        <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" minlength="8" maxlength="128" placeholder="Enter your password" autocomplete="current-password" required></div>
+        <div class="field"><label id="emailLabel" for="email">Email or username</label><input id="email" name="identifier" type="text" maxlength="254" placeholder="you@example.com or username" autocomplete="username" required></div>
+        <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" minlength="1" maxlength="128" placeholder="Enter your password" autocomplete="current-password" required></div>
         <button class="auth-submit" id="authSubmit" type="submit">Sign in</button>
       </form>
       <div class="auth-error" id="authError" role="alert"></div>
@@ -131,16 +131,31 @@ function toast(message){
 }
 async function api(path, options){
   options=options||{};
-  const headers={};
-  const config={method:options.method||"GET",credentials:"same-origin",headers};
-  if(options.body!==undefined){headers["Content-Type"]="application/json";config.body=JSON.stringify(options.body);}
-  const response=await fetch(path,config);
-  const data=await response.json().catch(()=>({error:"The server returned an invalid response."}));
+  const headers={Accept:"application/json"};
+  const config={method:options.method||"GET",credentials:"same-origin",cache:"no-store",headers};
+  if(options.body!==undefined){
+    headers["Content-Type"]="application/json";
+    config.body=JSON.stringify(options.body);
+  }
+  let response;
+  try{
+    response=await fetch(path,config);
+  }catch(error){
+    const networkError=new Error("Couldn't reach Voxora. Check your connection and try again.");
+    networkError.cause=error;
+    throw networkError;
+  }
+  const data=await response.json().catch(()=>({error:"Voxora returned an unreadable response."}));
   if(!response.ok){
     if(response.status===401 && state.user && path!=="/api/auth/logout"){
-      state.user=null; stopPolling(); renderAuth("login"); $("authError").textContent="Your session ended. Please sign in again.";
+      state.user=null;
+      stopPolling();
+      renderAuth("login");
+      $("authError").textContent="Your session ended. Please sign in again.";
     }
-    throw new Error(data.error||"Something went wrong.");
+    const error=new Error(typeof data.error==="string"?data.error:"Voxora couldn't complete that request.");
+    error.status=response.status;
+    throw error;
   }
   return data;
 }
@@ -155,34 +170,77 @@ function safeDate(value){
 }
 function stopPolling(){if(state.poll){clearInterval(state.poll);state.poll=null;}}
 function renderAuth(mode){
-  stopPolling(); state.authMode=mode||"login";
-  $("appShell").classList.add("hidden"); $("authScreen").classList.remove("hidden");
+  stopPolling();
+  state.authMode=mode||"login";
+  $("appShell").classList.add("hidden");
+  $("authScreen").classList.remove("hidden");
+
   const registering=state.authMode==="register";
   $("authTitle").textContent=registering?"Create your account":"Welcome back";
-  $("authSubtitle").textContent=registering?"Make a home for your communities.":"Sign in to continue to your communities.";
+  $("authSubtitle").textContent=registering
+    ?"Choose a display name, username, email, and password."
+    :"Sign in with your email or Voxora username.";
   $("registerFields").classList.toggle("hidden",!registering);
+  $("displayName").disabled=!registering;
+  $("displayName").required=registering;
+  $("username").disabled=!registering;
+  $("username").required=registering;
+
+  $("emailLabel").textContent=registering?"Email address":"Email or username";
+  $("email").type=registering?"email":"text";
+  $("email").name=registering?"email":"identifier";
+  $("email").placeholder=registering?"you@example.com":"you@example.com or username";
+  $("email").autocomplete=registering?"email":"username";
+
+  $("password").autocomplete=registering?"new-password":"current-password";
+  $("password").minLength=registering?8:1;
   $("authSubmit").textContent=registering?"Create account":"Sign in";
   $("authSwitchText").textContent=registering?"Already have an account?":"New to Voxora?";
   $("authSwitch").textContent=registering?"Sign in":"Create an account";
-  $("password").autocomplete=registering?"new-password":"current-password";
   $("authError").textContent="";
 }
 $("authSwitch").addEventListener("click",()=>renderAuth(state.authMode==="login"?"register":"login"));
 $("authForm").addEventListener("submit",async e=>{
-  e.preventDefault(); if(state.loading)return;
+  e.preventDefault();
+  if(state.loading)return;
+
   const registering=state.authMode==="register";
-  const payload={email:$("email").value.trim(),password:$("password").value};
-  if(registering){payload.displayName=$("displayName").value.trim();payload.username=$("username").value.trim();}
-  state.loading=true; $("authSubmit").disabled=true; $("authSubmit").textContent=registering?"Creating account…":"Signing in…"; $("authError").textContent="";
+  const identifier=$("email").value.trim();
+  const payload=registering
+    ?{displayName:$("displayName").value.trim(),username:$("username").value.trim(),email:identifier,password:$("password").value}
+    :{identifier,password:$("password").value};
+
+  state.loading=true;
+  $("authSubmit").disabled=true;
+  $("authSubmit").textContent=registering?"Creating account…":"Signing in…";
+  $("authError").textContent="";
+
+  let authenticated=false;
   try{
     const data=await api(registering?"/api/auth/register":"/api/auth/login",{method:"POST",body:payload});
-    state.user=data.user; await startWorkspace();
-  }catch(err){$("authError").textContent=err.message;}
-  finally{state.loading=false;$("authSubmit").disabled=false;$("authSubmit").textContent=registering?"Create account":"Sign in";}
+    state.user=data.user;
+    authenticated=true;
+    await startWorkspace();
+  }catch(err){
+    $("authError").textContent=authenticated
+      ?"Your account is ready, but Voxora couldn't load your communities. Reload this page to continue."
+      :err.message;
+  }finally{
+    state.loading=false;
+    $("authSubmit").disabled=false;
+    $("authSubmit").textContent=registering?"Create account":"Sign in";
+  }
 });
 async function checkSession(){
-  try{const data=await api("/api/auth/me");state.user=data.user;await startWorkspace();}
-  catch(err){if(err.message!=="You are not signed in.")$("authError").textContent=err.message;}
+  try{
+    const data=await api("/api/auth/me");
+    state.user=data.user;
+    await startWorkspace();
+  }catch(err){
+    if(err.status!==401){
+      $("authError").textContent=err.message;
+    }
+  }
 }
 function renderProfile(){
   $("profileName").textContent=state.user.display_name||state.user.username;
@@ -291,12 +349,25 @@ async function refreshCommunities(){
   }
 }
 async function startWorkspace(){
-  $("authScreen").classList.add("hidden");$("appShell").classList.remove("hidden");renderProfile();
+  // Load the signed-in user's data first. Keep the auth screen visible until
+  // this succeeds, so a workspace API error is not mistaken for bad credentials.
+  renderProfile();
   await refreshCommunities();
-  const params=new URLSearchParams(location.search);const invite=params.get("invite");
+  $("authScreen").classList.add("hidden");
+  $("appShell").classList.remove("hidden");
+
+  const params=new URLSearchParams(location.search);
+  const invite=params.get("invite");
   if(invite){
-    try{const joined=await api("/api/invites/join",{method:"POST",body:{code:invite}});history.replaceState({}, "", location.pathname);await refreshCommunities();toast("You joined "+joined.community.name+".");}
-    catch(err){history.replaceState({}, "", location.pathname);toast(err.message);}
+    try{
+      const joined=await api("/api/invites/join",{method:"POST",body:{code:invite}});
+      history.replaceState({}, "", location.pathname);
+      await refreshCommunities();
+      toast("You joined "+joined.community.name+".");
+    }catch(err){
+      history.replaceState({}, "", location.pathname);
+      toast(err.message);
+    }
   }
 }
 function openModal(title,description,label,placeholder,button,action){
