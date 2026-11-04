@@ -63,7 +63,7 @@ Voxora is being developed in stages. This checklist reflects what is currently i
 ### Core experience
 - [x] Initial project setup
 - [x] Responsive community chat interface
-- [x] Account registration and sign-in
+- [x] Account registration and sign-in with clearer duplicate username/email errors
 - [x] Server-managed sign-in sessions
 - [x] Community creation
 - [x] Community invite links and joining by invite code
@@ -90,7 +90,7 @@ The roadmap may change as Voxora grows. A feature is marked complete only when i
 
 ## Current Project Status
 
-Voxora now has a working foundation for account-based communities, channels, member lists, and saved text conversations.
+Voxora now has a working foundation for account-based communities, channels, member lists, and saved text conversations. Registration now checks for existing usernames and emails separately, and unexpected database failures no longer appear as duplicate-account errors.
 
 Messages are saved and the latest channel history is loaded when you open a channel. New messages refresh automatically while the channel is open, but updates are not instant yet. Email verification, account recovery, voice and video communication, file sharing, direct messages, and advanced moderation are still planned.
 
